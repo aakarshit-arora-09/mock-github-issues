@@ -2,8 +2,16 @@ import {ClosedIssueIcon, OpenButton} from "@/components/IssuesContainer/Icons";
 import {timeAgo} from "@/utils";
 import {issuesData, Label} from "@/components/IssuesContainer/types";
 import {LabelPill} from "@/components/LabelPill/LabelPill";
+import {LoadingSpinner} from "@/components/LoadingSpinner/LoadingSpinner";
 
-export function IssueElement({status, title, number, author, creationDate, labels}: { status: string, title: string, number: number, author: string, creationDate: string, labels: Label[] }) {
+export function IssueElement({status, title, number, author, creationDate, labels}: {
+    status: string,
+    title: string,
+    number: number,
+    author: string,
+    creationDate: string,
+    labels: Label[]
+}) {
     const formattedDate = timeAgo(new Date(creationDate))
     console.log(title, labels)
     return (
@@ -45,13 +53,18 @@ export function IssuesList({issuesType, issuesData}: { issuesType: string, issue
         <div className="flex-row justify-between rounded w-full ">
 
             {
-                issuesData.map((issue) => <IssueElement key={issue.id}
-                                                        status={issue.state}
-                                                        title={issue.title}
-                                                        number={issue.number}
-                                                        author={issue.user.login}
-                                                        creationDate={issue.created_at}
-                                                        labels={issue.labels}/>)
+                issuesData[0].title !== "fallback" && issuesData.map((issue) => <IssueElement key={issue.id}
+                                                                                              status={issue.state}
+                                                                                              title={issue.title}
+                                                                                              number={issue.number}
+                                                                                              author={issue.user.login}
+                                                                                              creationDate={issue.created_at}
+                                                                                              labels={issue.labels}/>)
+            }
+            {
+                issuesData[0].title === "fallback" && <div className="flex items-center justify-center h-screen">
+                    <LoadingSpinner/>
+                </div>
             }
         </div>
     )

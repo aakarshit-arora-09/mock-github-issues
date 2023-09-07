@@ -22,7 +22,7 @@ function pageNumberReducer(prevState: CurrentPageState, action: Action): Current
 
 const config = {
     headers: {
-        Authorization: "Bearer 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"
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN}`
     }
 }
 
@@ -55,9 +55,9 @@ export default function IssuesTable() {
     const [issuesType, setIssuesType] = useState(() => "open")
     const [currentPageState, pageDispatch] = useReducer(pageNumberReducer, {currentPage: 1});
 
-    const issuesDataResponse = useSWR(`https://api.github.com/repos/facebook/react/issues?state=${issuesType}&page=${currentPageState.currentPage}`, fetcher, {});
-    const openIssuesResponse = useSWR(`https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:open&per_page=1`, fetcher,);
-    const closedIssuesResponse = useSWR(`https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:closed&per_page=1`, fetcher,);
+    const issuesDataResponse = useSWR(`https://api.github.com/repos/facebook/react/issues?state=${issuesType}&page=${currentPageState.currentPage}`, fetcher, {fallbackData: issuesFallbackData});
+    const openIssuesResponse = useSWR(`https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:open&per_page=1`, fetcher, {fallbackData: openIssuesFallbackData});
+    const closedIssuesResponse = useSWR(`https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:closed&per_page=1`, fetcher, {fallbackData: closedIssuesFallbackData});
 
     const issuesData: issuesData = issuesDataResponse.data
 
