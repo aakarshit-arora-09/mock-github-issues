@@ -14,10 +14,15 @@ export type issuesCount = {
     closed: number
 }
 export type CurrentPageState = {
-    currentPage: number
+    currentPage: number,
+    after: string | null,
+    before: string | null,
 }
 
-export type Action = { type: "NEXT" } | { type: "PREVIOUS" } | { type: "SPECIFIC_PAGE", newPageNumber: number }
+export type Action = { type: "NEXT", after: string } | { type: "PREVIOUS", before: string } | {
+    type: "SPECIFIC_PAGE",
+    newPageNumber: number
+}
 
 export type Label = {
     name: string,

@@ -1,16 +1,22 @@
 import {ClosedIssueIcon, OpenButton} from "@/components/IssuesContainer/Icons";
 import {timeAgo} from "@/utils";
-import {issuesData, Label} from "@/components/IssuesContainer/types";
+import {Label} from "@/__generated__/graphql"
 import {LabelPill} from "@/components/LabelPill/LabelPill";
 
-export function IssueElement({status, title, number, author, creationDate, labels}: { status: string, title: string, number: number, author: string, creationDate: string, labels: Label[] }) {
+export function IssueElement({status, title, number, author, creationDate, labels}: {
+    status: string,
+    title: string,
+    number: number,
+    author: string,
+    creationDate: string,
+    labels: { node: Label }[]
+}) {
     const formattedDate = timeAgo(new Date(creationDate))
-    console.log(title, labels)
     return (
         <div className="flex justify-between w-full items-center border-b-2 border-solid border-gray-100 p-3">
             <div className="flex items-center space-x-2">
                 <div className="self-start">
-                    {status === "closed" ? <ClosedIssueIcon fill="purple"/> : <OpenButton fill="green"/>}
+                    {status === "CLOSED" ? <ClosedIssueIcon fill="purple"/> : <OpenButton fill="green"/>}
                 </div>
                 <div className="self-start">
                     <div className="flex align-baseline space-x-2">
@@ -19,7 +25,7 @@ export function IssueElement({status, title, number, author, creationDate, label
                         </div>
                         <div className="flex items-center space-x-2">
                             {labels.map((label, index) => index < 3 &&
-                                <LabelPill key={label.id} name={label.name} color={label.color}/>)}
+                                <LabelPill key={label.node.id} name={label.node.name}/>)}
                         </div>
                     </div>
 
@@ -40,18 +46,17 @@ export function IssueElement({status, title, number, author, creationDate, label
     )
 }
 
-export function IssuesList({issuesType, issuesData}: { issuesType: string, issuesData: issuesData }) {
+export function IssuesList({issuesType, issuesData}: { issuesType: string, issuesData: any[] }) {
     return (
         <div className="flex-row justify-between rounded w-full ">
-
             {
-                issuesData.map((issue) => <IssueElement key={issue.id}
-                                                        status={issue.state}
-                                                        title={issue.title}
-                                                        number={issue.number}
-                                                        author={issue.user.login}
-                                                        creationDate={issue.created_at}
-                                                        labels={issue.labels}/>)
+                issuesData.map((issue) => <IssueElement key={issue.node.id}
+                                                        status={issue.node.state}
+                                                        title={issue.node.title}
+                                                        number={issue.node.number}
+                                                        author={issue.node.author?.login}
+                                                        creationDate={issue.node.createdAt}
+                                                        labels={issue.node.labels.edges}/>)
             }
         </div>
     )
